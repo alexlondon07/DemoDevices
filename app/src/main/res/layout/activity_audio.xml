@@ -5,50 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="io.github.alexlondon07.demodevices.MainActivity">
+    tools:context="io.github.alexlondon07.demodevices.AudioActivity">
+
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/audio_progressbar"
+        android:layout_marginTop="20dp"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/main_iv_camera"
+            android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_camera"
+            android:src="@drawable/ic_delete_forever_black_24dp"
             />
 
-        <ImageView
-            android:id="@+id/main_iv_gallery"
+        <ToggleButton
+            android:id="@+id/tgbtn_record_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_image"/>
+            android:background="@drawable/ic_mic_black_24dp"
+            android:textOff=""
+            android:textOn=""/>
+
 
         <ImageView
-            android:id="@+id/audio_activity"
+            android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_audiotrack_black_24dp"/>
+            android:src="@drawable/ic_play_circle_filled_black_24dp"
+            />
+
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/main_layout_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/main_recyclerViewItems"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
-
-    </LinearLayout>
-
-
-
-
-
 
 </LinearLayout>
