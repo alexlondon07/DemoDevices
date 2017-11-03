@@ -3,9 +3,13 @@ package io.github.alexlondon07.demodevices;
 import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +18,12 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout main_linearLayoutPhotoItems;
     private PhotoAdapter photoAdapter;
     private ArrayList<String> arrayFiles;
+    private File photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                main_linearLayoutPhotoItems.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 photoAdapter.setSize(main_linearLayoutPhotoItems.getWidth(), main_linearLayoutPhotoItems.getHeight());
                 photoAdapter.setFiles(arrayFiles);
                 photoAdapter.notifyDataSetChanged();
@@ -59,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         main_iv_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showCamera();
             }
         });
 
@@ -86,6 +97,49 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void showCameraIntent() {
+
+        Intent takePictureIntent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = null;
+
+        if(takePictureIntent.resolveActivity(getPackageManager()) !=null){
+            try {
+                photoFile = createImageFile();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        if (photoFile !=null) {
+
+            Uri photoUri = FileProvider.getUriForFile(this, "io.github.alexlondon07.demodevices", photoFile);
+            List<ResolveInfo> resolveInfoList = getPackageManager().
+                    queryIntentActivities(takePictureIntent, getPackageManager().MATCH_DEFAULT_ONLY);
+
+            for (ResolveInfo resolveInfo: resolveInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+            super.startActivityForResult(takePictureIntent, Constants.CAMERA_CAPTURE);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+
+        String imageFileName = Constants.PREFIX_FILE_IMAGE + new SimpleDateFormat(Constants.FORMAT_DATE_FILE).format(new Date());
+        File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (storageDir != null && !storageDir.exists()) {
+            boolean result = storageDir.mkdir();
+            if (!result) {
+                return null;
+            }
+        }
+        return File.createTempFile(imageFileName, Constants.SUFFIX_FILE_IMAGE, storageDir);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -97,7 +151,17 @@ public class MainActivity extends AppCompatActivity {
             resultGalleryKitKatHigher(data);
         }
 
+        if(requestCode == Constants.CAMERA_CAPTURE){
+            resultCameraCapture();
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void resultCameraCapture(){
+        if (photoFile != null) {
+            setArrayFileName(photoFile.getPath());
+        }
     }
 
     private void resultGalleryKitKatHigher(Intent data) {
@@ -127,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void showGallery() {
-
         if(Permissions.isGrantedPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
             showGalleryIntent();
         }else{
@@ -136,6 +199,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void showCamera() {
+        if(Permissions.isGrantedPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            showCameraIntent();
+        }else{
+            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+            Permissions.verifyPermissions(this, permissions);
+        }
+    }
 
     private void loadView() {
         main_iv_gallery = (ImageView) findViewById(R.id.main_iv_gallery);
