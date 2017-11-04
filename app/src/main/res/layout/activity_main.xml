@@ -30,7 +30,15 @@
             android:id="@+id/audio_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="intentToVideoAudio"
             android:src="@drawable/ic_audiotrack_black_24dp"/>
+
+        <ImageView
+            android:id="@+id/video_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="intentToVideoActivity"
+            android:src="@drawable/ic_video_call_black_24dp"/>
 
     </LinearLayout>
 

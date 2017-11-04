@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private PhotoAdapter photoAdapter;
     private ArrayList<String> arrayFiles;
     private File photoFile;
+
+    private Button btn_video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
                 showGallery();
             }
         });
+
+
+
+
     }
 
     private void showGalleryIntent() {
@@ -216,5 +223,17 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         main_recycler_viewItems.setLayoutManager(layoutManager);
+
+        btn_video = (Button) findViewById(R.id.btn_video);
+    }
+
+    public void intentToVideoActivity(View view) {
+        Intent intent = new Intent(this, VideoActivity.class);
+        startActivity(intent);
+    }
+
+    public void intentToVideoAudio(View view) {
+        Intent intent = new Intent(this, AudioActivity.class);
+        startActivity(intent);
     }
 }

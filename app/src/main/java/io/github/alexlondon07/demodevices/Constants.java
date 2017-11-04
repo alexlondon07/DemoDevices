@@ -15,6 +15,7 @@ class Constants {
     public static final String PREFIX_FILE_AUDIO = "audioRecord";
     public static final int MAX_DURATION = 30000;
     public static final int INTERVAL = 1000;
+    public static final int REQUEST_VIDEO_CAPTURE = 22;
     public static int REQUEST_CODE_PERMISSION = 2;
 
 }
